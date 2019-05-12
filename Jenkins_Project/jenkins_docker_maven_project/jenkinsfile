@@ -1,0 +1,17 @@
+node{
+    stage('Cloning git repository'){
+        git 'https://github.com/kuberguy/helloworld'
+    }
+    stage('Maven Compile And Build'){
+        sh label: '', script: 'mvn clean install package'
+    }
+    stage('Create Docker Image'){
+        sh label: '', script: 'sudo docker build -t dhanesh007/test-docker:version1 .' 
+    }
+    stage('Push Docker Image To Docker Hub'){
+        withCredentials([string(credentialsId: 'Docker_Credentials', variable: 'Docker_Credentials')]) {
+        sh label: '', script: "sudo docker login -u dhanesh007 -p ${Docker_Credentials}"
+    }
+        sh label: '', script: 'sudo docker push dhanesh007/test-docker:version1'
+    }
+}
